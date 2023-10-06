@@ -2,6 +2,12 @@
 
 This is a comprehensive PHP library for generating EPub books. It provides a simple and intuitive API to create EPub files from scratch, allowing you to focus on the content of your book rather than the technical details of the EPub format.
 
+[![GitHub stars](https://img.shields.io/github/stars/tregor/epub?style=flat-square)](https://github.com/tregor/Tritonium/stargazers)
+[![Last Commit](https://img.shields.io/github/last-commit/tregor/epub?style=flat-square)](https://github.com/tregor/ErrorHandler)
+[![GitHub forks](https://img.shields.io/github/forks/tregor/epub?style=flat-square)](https://github.com/tregor/Tritonium/network)
+[![GitHub license](https://img.shields.io/github/license/tregor/epub?style=flat-square)](LICENSE)
+
+
 ## Navigation
 
 - [Requirements](#requirements)
