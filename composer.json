@@ -1,0 +1,21 @@
+{
+  "name": "tregor/epub",
+  "description": "description",
+  "license": "proprietary",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "authors": [
+    {
+      "name": "tregor",
+      "email": "tregor1997@gmail.com"
+    }
+  ],
+  "require": {
+
+  },
+  "autoload": {
+    "psr-4": {
+      "tregor\\epub\\": "src/"
+    }
+  }
+}
