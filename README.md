@@ -16,7 +16,6 @@ This is a comprehensive PHP library for generating EPub books. It provides a sim
 - [Available Methods](#available-methods)
 - [Future Methods](#future-methods)
 - [TODO](#todo)
-- [Contribute](#contribute)
 - [License](#license)
 - [Copyright](#copyright)
 
@@ -84,13 +83,9 @@ Here is a list of features that we plan to implement:
 - Support for adding additional metadata
 - Improved error handling
 
-## Contribute
-
-Contributions are always welcome! Please read the [contribution guidelines](CONTRIBUTING.md) first.
-
 ## License
 
-The EPub Generator is proprietary software. See the [license file](LICENSE.md) for more information.
+The EPub Generator is proprietary software. See the [license file](LICENSE) for more information.
 
 ## Copyright
 
