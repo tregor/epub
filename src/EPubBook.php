@@ -26,6 +26,7 @@ class EPubBook
     }
 
     public function addChapter($title, $content, $order) {
+        //Используй HTML markdown для epub. Заголовок где номер главы должен быть выделен тегом <h2  class=\"bordered-title\">CHAPTER 1</h2>. Далее на новой строке (</br>) идёт название главы с тегом <h3 class=\"subtitle\">CHAPTER_TITLE</h3>. Все абзацы должны находиться внутри тега <p class=\"ps1\">. После абзацев должна быть пустая строчка с помощью <p class=\"br\"><br /></p>.
         $this->chapters[] = [
             'title'   => $title,
             'content' => nl2br($content),
@@ -35,6 +36,7 @@ class EPubBook
 
     public function export($filename): string {
         $zip = new ZipArchive();
+//        $filename = "./{$this->title}.epub";
 
         if ($zip->open($filename, ZipArchive::CREATE) !== TRUE) {
             exit("Cannot open <$filename>\n");
@@ -63,8 +65,7 @@ class EPubBook
         return $filename;
     }
 
-    protected function getContainerXml(): string
-    {
+    protected function getContainerXml() {
         $xml = new XMLWriter();
         $xml->openMemory();
         $xml->startDocument('1.0', 'UTF-8');
@@ -80,15 +81,13 @@ class EPubBook
         return $xml->outputMemory();
     }
 
-    protected function getCss(): string
-    {
+    protected function getCss() {
         return <<<CSS
 p{margin:0;text-indent:0}p + p{text-indent:2.00rem}h1 + p,h2 + p,h3 + p,h4 + p,h5 + p,h6 + p{text-indent:0}.separator + p{text-indent:0}.separator + div > p:first-child{text-indent:0}.br + p{text-indent:0}.br + div > p:first-child{text-indent:0}.attribution{margin:0;text-indent:0;text-align:right;font-size:1.00rem}blockquote p + p{text-indent:1.25rem}blockquote p{margin:0;text-indent:0}blockquote{margin:0}.body{margin:0;text-indent:2.00rem;font-size:1.00rem}.bordered-title{margin:0 0 1.11rem;text-indent:0;text-align:center;font-size:1.33rem;font-weight:normal}caption{margin:0;text-indent:0;text-align:center;font-size:0.83rem;caption-side:bottom}.caption{margin:0;text-indent:0;text-align:center;font-size:0.83rem}.centered-text{margin:0;text-indent:0;line-height:1.1em;text-align:center}.chapter-number{margin:0 0 2.22rem;text-indent:0;text-align:center;font-size:1.67rem;font-weight:normal}code{font-weight:normal;font-style:normal;text-decoration:none}.emphasis{font-size:1.00rem;font-weight:normal;font-style:italic}figcaption{margin:0;text-indent:0;text-align:center;font-size:0.83rem}.footnotes{margin:0;text-indent:0;font-size:1.00rem}.heading-1{margin:0 0 1.78rem;text-indent:0;text-align:center;font-size:1.33rem;font-weight:normal}.heading-2{margin:0.89rem 0;text-indent:0;text-align:center;font-size:1.08rem;font-weight:normal}.page-title{margin:0 0 1.33rem;text-indent:0;text-align:center;font-size:1.17rem}pre > code{white-space:pre-wrap;-webkit-hyphens:none;hyphens:none}.raw-html{}.raw-html-block{}.section-number{margin:0 0 1.78rem;text-indent:0;text-align:center;font-size:1.33rem;font-weight:normal}.sub-heading{margin:0.89rem 0;text-indent:0;text-align:center;font-size:1.08rem;font-weight:normal}.subtitle{margin:0 0 1.78rem;text-indent:0;text-align:center;font-size:1.33rem;font-weight:normal;font-style:italic}.title{margin:0 0 1.11rem;text-indent:0;text-align:center;font-size:1.33rem;font-weight:normal}.verse{margin:0;text-indent:0;line-height:1.1em;text-align:center;font-size:1.00rem}.ps1{margin-left:0;text-indent:1.50rem}a.fn-marker{font-size:0.65em;vertical-align:super;line-height:1em;text-decoration:none}a.fn-label{text-decoration:none}.separator{}.part-number-page-padding{margin:0;font-size:1rem;line-height:6rem}.part-title-page-padding{margin:0;font-size:1rem;line-height:6rem}.chapter-heading-page-padding{margin:0;font-size:1rem;line-height:6rem}.chapter-title-page-padding{margin:0;font-size:1rem;line-height:6rem}.heading-page-padding{margin:0;font-size:1rem;line-height:6rem}.chapter-page-padding{margin:0;font-size:1rem;line-height:6rem}.titled-chapter-page-padding{margin:0;font-size:1rem;line-height:6rem}.titled-section-page-padding{margin:0;font-size:1rem;line-height:6rem}table,table *{border:none;padding:0;margin:0}table{margin:1em auto;border-spacing:0;border:solid #000;border-width:0 0 1pt 1pt}table caption{margin-top:0.25em;caption-side:bottom;text-align:center}td,th{padding:0.25em 0.35em;border:solid #000;border-width:1pt 1pt 0 0}td p{margin:0;text-indent:0}img{display:block;margin:1rem auto}img + figcaption{margin-top:-0.75rem}ol ol{list-style-type:lower-alpha}ol ol ol{list-style-type:lower-roman}ol ol ol ol{list-style-type:decimal}ol ol ol ol ol{list-style-type:lower-alpha}ol ol ol ol ol ol{list-style-type:lower-roman}ol ol ol ol ol ol ol{list-style-type:decimal}ul ul{list-style:none;display:block;text-indent:-0.6em}ul ul li:before{content:'\2043\00A0'}.small-caps{font-variant:small-caps}nav#toc ol{list-style:none;line-height:1.5em;margin-top:0.5rem;margin-bottom:0.5rem}nav#toc ol li:before{content:none}.bordered-title{margin-left:10%;margin-right:10%;border-top:1px solid black;padding-top:12px;border-bottom:1px solid black;padding-bottom:12px}.bordered-title + .subtitle{padding-top:16px}blockquote{margin-left:2rem;margin-right:2rem}.attribution{margin-left:2rem;margin-right:2rem}blockquote + .attribution{margin-top:-0.5rem}figure{page-break-inside:avoid;text-align:center}.titled-chapter{margin:0;text-indent:0;font-size:0.92rem;font-weight:normal}
 CSS;
     }
 
-    protected function getChapterXml($chapter): string
-    {
+    protected function getChapterXml($chapter) {
         $content_html = <<<HTML
 <h2 id="doc2" class="titled-chapter-page-padding"><br /></h2>
 <h2 class="bordered-title"><span style="text-transform:uppercase;">CHAPTER {$chapter['order']}</span></h2>
@@ -118,8 +117,7 @@ HTML;
         return $xml->outputMemory();
     }
 
-    protected function getContentOpf(): string
-    {
+    protected function getContentOpf() {
         $xml = new XMLWriter();
         $xml->openMemory();
         $xml->startDocument('1.0', 'UTF-8');
@@ -157,8 +155,7 @@ HTML;
         return $xml->outputMemory();
     }
 
-    protected function getTocNcx(): string
-    {
+    protected function getTocNcx() {
         $xml = new XMLWriter();
         $xml->openMemory();
         $xml->startDocument('1.0', 'UTF-8');
@@ -169,6 +166,7 @@ HTML;
         $xml->writeElement('text', $this->title);
         $xml->endElement(); // docTitle
         $xml->startElement('navMap');
+        // Здесь должны быть navPoint элементы для каждой главы
         foreach ($this->chapters as $chapter) {
             $xml->startElement('navPoint');
             $xml->writeAttribute('id', $chapter['title']);
