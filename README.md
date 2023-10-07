@@ -1,8 +1,8 @@
 # EPub Generator
 
-[![GitHub stars](https://img.shields.io/github/stars/tregor/epub?style=flat-square)](https://github.com/tregor/Tritonium/stargazers)
-[![Last Commit](https://img.shields.io/github/last-commit/tregor/epub?style=flat-square)](https://github.com/tregor/ErrorHandler)
-[![GitHub forks](https://img.shields.io/github/forks/tregor/epub?style=flat-square)](https://github.com/tregor/Tritonium/network)
+[![GitHub stars](https://img.shields.io/github/stars/tregor/epub?style=flat-square)](https://github.com/tregor/epub/stargazers)
+[![Last Commit](https://img.shields.io/github/last-commit/tregor/epub?style=flat-square)](https://github.com/tregor/epub)
+[![GitHub forks](https://img.shields.io/github/forks/tregor/epub?style=flat-square)](https://github.com/tregor/epub/network)
 [![GitHub license](https://img.shields.io/github/license/tregor/epub?style=flat-square)](LICENSE)
 
 The EPub Generator is a powerful PHP library for creating EPub books. It provides a comprehensive set of features and an intuitive API to generate EPub files with ease. Whether you're a writer, publisher, or developer, this library will simplify the process of creating EPub books and help you deliver high-quality content to your readers.
