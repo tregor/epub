@@ -12,7 +12,8 @@
   ],
   "require": {
     "ext-xmlwriter": "*",
-    "ext-zip": "*"
+    "ext-zip": "*",
+    "ext-simplexml": "*"
   },
   "autoload": {
     "psr-4": {
