@@ -280,9 +280,35 @@ HTML;
         $xml->writeAttribute('version', '2.0');
         $xml->startElement('metadata');
         $xml->writeAttribute('xmlns:dc', 'http://purl.org/dc/elements/1.1/');
+        $xml->writeAttribute('xmlns:opf', 'http://www.idpf.org/2007/opf');
         $xml->writeElement('dc:title', $this->getTitle());
-        $xml->writeElement('dc:creator', $this->getAuthor());
+        $xml->startElement('dc:identifier');
+        $xml->writeAttribute('id', 'BookId');
+        $xml->text(uniqid('urn:uuid:'));
+        $xml->endElement();
         $xml->writeElement('dc:language', $this->getLanguage());
+        $xml->startElement('dc:creator');
+        $xml->writeAttribute('id', 'author');
+        $xml->text($this->getAuthor());
+        $xml->endElement();
+
+        $xml->startElement('meta');
+        $xml->writeAttribute('property', 'dcterms:modified');
+        $xml->text(date('Y-m-dTH:i:sZ', $this->date_timestamp));
+        $xml->endElement();
+        $xml->writeElement('dc:date', date('Y-m-dTH:i:sZ', $this->date_timestamp));
+
+        $xml->startElement('meta');
+        $xml->writeAttribute('refines', '#author');
+        $xml->writeAttribute('property', 'role');
+        $xml->text('aut');
+        $xml->endElement();
+        $xml->startElement('meta');
+        $xml->writeAttribute('refines', '#author');
+        $xml->writeAttribute('property', 'file-as');
+        $xml->text(explode(" ", $this->getAuthor())[1] . ', ' . explode(" ", $this->getAuthor())[0]);
+        $xml->endElement();
+
 
         // Set cover image
         if (!empty($this->image_cover)) {
@@ -292,15 +318,14 @@ HTML;
             $xml->endElement(); // meta
         }
 
-        // Set creation date
-        if (!empty($this->date_timestamp)) {
-            $xml->startElement('dc:date');
-            $xml->text(date('m/d/Y', $this->date_timestamp));
-            $xml->endElement(); // dc:date
-        }
-
         $xml->endElement(); // metadata
         $xml->startElement('manifest');
+        $xml->startElement('item');
+        $xml->writeAttribute('id', 'ncx');
+        $xml->writeAttribute('href', 'toc.ncx');
+        $xml->writeAttribute('media-type', 'application/x-dtbncx+xml');
+        $xml->writeAttribute('fallback', 'contents');
+        $xml->endElement(); // item
 
         foreach ($this->chapters as $chapter) {
             if ($chapter instanceof EPubChapter) {
@@ -315,7 +340,7 @@ HTML;
         // Add cover image to manifest
         if (!empty($this->image_cover)) {
             $xml->startElement('item');
-            $xml->writeAttribute('id', $this->image_cover);
+            $xml->writeAttribute('id', 'cover-image');
             $xml->writeAttribute('href', $this->image_cover);
             $xml->writeAttribute('media-type', 'image/jpeg'); // Adjust the media type as needed
             $xml->endElement(); // item
@@ -349,16 +374,6 @@ HTML;
         $this->title = $title;
     }
 
-    public function getAuthor(): string
-    {
-        return $this->author;
-    }
-
-    public function setAuthor(string $author): void
-    {
-        $this->author = $author;
-    }
-
     public function getLanguage(): string
     {
         return $this->language;
@@ -369,6 +384,16 @@ HTML;
         $this->language = $language;
     }
 
+    public function getAuthor(): string
+    {
+        return $this->author;
+    }
+
+    public function setAuthor(string $author): void
+    {
+        $this->author = $author;
+    }
+
     protected function getTocNcx()
     {
         $xml = new XMLWriter();
@@ -377,31 +402,77 @@ HTML;
         $xml->startElement('ncx');
         $xml->writeAttribute('xmlns', 'http://www.daisy.org/z3986/2005/ncx/');
         $xml->writeAttribute('version', '2005-1');
+
+        $xml->startElement('head');
+        $xml->startElement('meta');
+        $xml->writeAttribute('name', 'dtb:uid');
+        $xml->writeAttribute('content', 'urn:uuid:' . uniqid());
+        $xml->endElement(); // meta
+        $xml->startElement('meta');
+        $xml->writeAttribute('name', 'dtb:depth');
+        $xml->writeAttribute('content', '1');
+        $xml->endElement(); // meta
+        $xml->startElement('meta');
+        $xml->writeAttribute('name', 'dtb:totalPageCount');
+        $xml->writeAttribute('content', '0');
+        $xml->endElement(); // meta
+        $xml->startElement('meta');
+        $xml->writeAttribute('name', 'dtb:maxPageNumber');
+        $xml->writeAttribute('content', '0');
+        $xml->endElement(); // meta
+        $xml->endElement(); // head
+
+
         $xml->startElement('docTitle');
         $xml->writeElement('text', $this->getTitle());
         $xml->endElement(); // docTitle
 
         $xml->startElement('navMap');
+
+        $navPointId = 1;
+        $playOrder = 1;
+
+        $this->writeNavPoint($xml, $navPointId, $playOrder, 'Contents', 'contents.xhtml');
+
         foreach ($this->chapters as $chapter) {
-            $xml->startElement('navPoint');
-            $xml->writeAttribute('id', $chapter->getTitleMD5());
-            $xml->writeAttribute('playOrder', $chapter->getOrder());
+            if ($chapter instanceof EPubChapter) {
+                $navPointId++;
+                $playOrder++;
 
-            $xml->startElement('navLabel');
-            $xml->writeElement('text', $chapter->getTitle());
-            $xml->endElement(); // navLabel
-
-            $xml->startElement('content');
-            $xml->writeAttribute('src', "{$chapter->getTitleMD5()}.xml");
-            $xml->endElement(); // content
-
-            $xml->endElement(); // navPoint
+                $this->writeNavPoint(
+                    $xml,
+                    $navPointId,
+                    $playOrder,
+                    $chapter->getTitle(),
+                    $chapter->getTitleMD5() . '.xhtml'
+                );
+            }
         }
+
         $xml->endElement(); // navMap
         $xml->endElement(); // ncx
         $xml->endDocument();
 
         return $xml->outputMemory();
+    }
+
+    protected function writeNavPoint(XMLWriter $xml, int $navPointId, int $playOrder, string $title, string $src)
+    {
+        $xml->startElement('navPoint');
+        $xml->writeAttribute('id', "navPoint-{$navPointId}");
+        $xml->writeAttribute('playOrder', $playOrder);
+
+        $xml->startElement('navLabel');
+        $xml->startElement('text');
+        $xml->text($title);
+        $xml->endElement(); // text
+        $xml->endElement(); // navLabel
+
+        $xml->startElement('content');
+        $xml->writeAttribute('src', $src);
+        $xml->endElement(); // content
+
+        $xml->endElement(); // navPoint
     }
 
     public function exportToZIP(string $filename): string
