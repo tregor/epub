@@ -17,6 +17,7 @@ class EPubBook
     protected string $date_timestamp;
     protected array $chapters = [];
     protected array $images = [];
+    protected bool $useHtml = false;
 
     public function __construct(string $title)
     {
@@ -198,7 +199,11 @@ class EPubBook
 
         foreach ($this->chapters as $chapter) {
             if ($chapter instanceof EPubChapter) {
-                $zip->addFromString("OPS/{$chapter->getTitleMD5()}.xml", $this->getChapterXml($chapter));
+                if ($this->useHtml) {
+                    $zip->addFromString("OPS/{$chapter->getTitleMD5()}.xhtml", $this->getChapterXml($chapter));
+                } else {
+                    $zip->addFromString("OPS/{$chapter->getTitleMD5()}.xml", $this->getChapterXml($chapter));
+                }
             }
         }
 
@@ -539,5 +544,21 @@ HTML;
                 $chapter->setContent($content);
             }
         }
+    }
+
+    /**
+     * @return bool
+     */
+    public function isUseHtml(): bool
+    {
+        return $this->useHtml;
+    }
+
+    /**
+     * @param bool $useHtml
+     */
+    public function setUseHtml(bool $useHtml): void
+    {
+        $this->useHtml = $useHtml;
     }
 }
