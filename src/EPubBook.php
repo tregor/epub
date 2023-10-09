@@ -179,6 +179,9 @@ class EPubBook
     public function exportToEPUB(string $filename): string
     {
         $zip = new ZipArchive();
+        if (file_exists($filename)) {
+            unlink($filename);
+        }
 
         if ($zip->open($filename, ZipArchive::CREATE) !== true) {
             exit("Cannot open <$filename>\n");
@@ -241,7 +244,7 @@ CSS;
         $content_html = <<<HTML
 <h2 id="doc2" class="titled-chapter-page-padding"><br /></h2>
 <h3 class="subtitle"><em><span style="font-style:italic;">{$chapter->getTitle()}</span></em></h3>
-<p class="ps1">{$chapter->getContent()}</p>
+<p class="ps1">{$chapter->getContentHTML()}</p>
 <p class="br"><br /></p>
 HTML;
 

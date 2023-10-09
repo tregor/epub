@@ -40,6 +40,11 @@ class EPubChapter
         return $this->content;
     }
 
+    public function getContentHTML(): string
+    {
+        return nl2br($this->content);
+    }
+
     public function setContent(string $content): void
     {
         $this->content = $content;
