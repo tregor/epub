@@ -42,6 +42,14 @@ use tregor\epub\EPubBook;
 $book = new EPubBook('My First Book');
 ```
 
+### Parsing an Existing EPub Book
+
+You can also parse an existing EPub book and retrieve its information. To do this, use the `open` method:
+
+```php
+$book = EPubBook::open('existing_book.epub');
+```
+
 ### Setting Book Metadata
 
 You can set the author and language of the book using the `setAuthor` and `setLanguage` methods:
@@ -60,28 +68,12 @@ $book->addChapter('Chapter 1', 'This is the first chapter.', 1);
 $book->addChapter('Chapter 2', 'This is the second chapter.', 2);
 ```
 
-### Exporting the EPub Book
+### Rearranging Chapters
 
-Once you have added all the chapters, you can export the EPub book to a file using the `export` method:
-
-```php
-$book->export('my_first_book.epub');
-```
-
-### Parsing an Existing EPub Book
-
-You can also parse an existing EPub book and retrieve its information. To do this, use the `open` method:
+You can add a new chapter after an existing chapter by specifying the order of the existing chapter, the title and content of the new chapter, and the new order:
 
 ```php
-$book = EPubBook::open('existing_book.epub');
-```
-
-### Updating Chapters
-
-You can update the content of a chapter by specifying its order and providing the new content:
-
-```php
-$book->setChapterContent(1, 'This is the updated content of Chapter 1.');
+$book->addChapterAfter(1, 'Chapter 2', 'This is the new Chapter 2.', 2);
 ```
 
 ### Removing Chapters
@@ -92,12 +84,20 @@ To remove a chapter from the book, specify its order:
 $book->removeChapter(2);
 ```
 
-### Rearranging Chapters
+### Updating Chapters
 
-You can add a new chapter after an existing chapter by specifying the order of the existing chapter, the title and content of the new chapter, and the new order:
+You can update the content of a chapter by specifying its order and providing the new content:
 
 ```php
-$book->addChapterAfter(1, 'Chapter 2', 'This is the new Chapter 2.', 2);
+$book->setChapterContent(1, 'This is the updated content of Chapter 1.');
+```
+
+### Exporting the EPub Book
+
+Once you have added all the chapters, you can export the EPub book to a file using the `export` method:
+
+```php
+$book->export('my_first_book.epub');
 ```
 
 ## Available Methods
@@ -105,8 +105,6 @@ $book->addChapterAfter(1, 'Chapter 2', 'This is the new Chapter 2.', 2);
 Here are the available methods provided by the `EPubBook` class:
 
 - `__construct($title)`: Creates a new `EPubBook` object with the specified title.
-- `setAuthor($author)`: Sets the author of the book.
-- `setLanguage($language)`: Sets the language of the book.
 - `addChapter($title, $content, $order)`: Adds a new chapter to the book with the specified title, content, and order.
 - `removeChapter($order)`: Removes a chapter from the book with the specified order.
 - `addChapterAfter($order, $title, $content, $newOrder)`: Adds a new chapter after an existing chapter with the specified order, title, content, and new order.
@@ -124,7 +122,6 @@ Here are the available methods provided by the `EPubBook` class:
 
 Here is a list of features that we plan to implement in future releases:
 
-- Support for adding images to the book
 - Support for adding a table of contents
 - Support for adding a cover image
 - Support for adding additional metadata
