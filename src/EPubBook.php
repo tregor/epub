@@ -324,7 +324,7 @@ HTML;
         $xml->writeAttribute('id', 'ncx');
         $xml->writeAttribute('href', 'toc.ncx');
         $xml->writeAttribute('media-type', 'application/x-dtbncx+xml');
-        $xml->writeAttribute('fallback', 'contents');
+//        $xml->writeAttribute('fallback', 'contents');
         $xml->endElement(); // item
 
         foreach ($this->chapters as $chapter) {
@@ -429,11 +429,7 @@ HTML;
 
         $xml->startElement('navMap');
 
-        $navPointId = 1;
-        $playOrder = 1;
-
-        $this->writeNavPoint($xml, $navPointId, $playOrder, 'Contents', 'contents.xhtml');
-
+        $navPointId = $playOrder = 0;
         foreach ($this->chapters as $chapter) {
             if ($chapter instanceof EPubChapter) {
                 $navPointId++;
@@ -444,7 +440,7 @@ HTML;
                     $navPointId,
                     $playOrder,
                     $chapter->getTitle(),
-                    $chapter->getTitleMD5() . '.xhtml'
+                    $chapter->getTitleMD5() . '.xml'
                 );
             }
         }
